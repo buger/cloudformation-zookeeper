@@ -38,14 +38,6 @@
       "Description" : "Key prefix for S3 backups. Should be unique per S3 bucket per cluster",
       "Type" : "String"
     },
-    "Subnets" : {
-      "Description" : "List of VPC subnet IDs for the cluster. Note: must match up with the passed AvailabilityZones.",
-      "Type" : "CommaDelimitedList"
-    },
-    "VpcId" : {
-      "Description" : "VPC associated with the provided subnets",
-      "Type" : "String"
-    },
     "AdminSecurityGroup" : {
       "Description" : "Existing security group that should be granted administrative access to ZooKeeper (e.g., 'sg-123456')",
       "Type": "String"
@@ -139,7 +131,6 @@
         "MaxSize" : "9",
         "DesiredCapacity" : { "Ref" : "ClusterSize" },
         "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
-        "VPCZoneIdentifier" : { "Ref" : "Subnets" },
         "Tags" : [
           {
             "Key" : "role",
@@ -192,8 +183,7 @@
     "ClientSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "For ZooKeeper clients. Grants access to the associated ZooKeeper cluster.",
-        "VpcId" : { "Ref" : "VpcId" }
+        "GroupDescription" : "For ZooKeeper clients. Grants access to the associated ZooKeeper cluster."
       }
     },
 
@@ -201,7 +191,6 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable SSH and Exhibitor access",
-        "VpcId" : { "Ref" : "VpcId" },
         "SecurityGroupIngress" :
           [ { "IpProtocol" : "tcp", "FromPort" : "8181", "ToPort" : "8181", "SourceSecurityGroupId" : { "Ref" : "LbSecurityGroup"} },
             { "IpProtocol" : "tcp", "FromPort" : "2181", "ToPort" : "2181", "SourceSecurityGroupId" : { "Ref" : "ClientSecurityGroup"} },
@@ -225,7 +214,6 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable Exhibitor access",
-        "VpcId" : { "Ref" : "VpcId" },
         "SecurityGroupIngress" :
           [ { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "SourceSecurityGroupId" : { "Ref" : "ClientSecurityGroup"} } ]
       }
@@ -236,7 +224,6 @@
       "Properties" : {
         "Scheme": "internal",
         "SecurityGroups": [{ "Ref": "LbSecurityGroup" }, { "Ref": "AdminSecurityGroup" }],
-        "Subnets": { "Ref": "Subnets" },
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
           "InstancePort" : "8181",
