@@ -202,7 +202,7 @@
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {  "Fn::GetAtt": [ "ServerSecurityGroup","GroupId"] },
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "0",
         "ToPort": "65535",
         "SourceSecurityGroupId": {  "Fn::GetAtt" : ["ServerSecurityGroup","GroupId"] }
