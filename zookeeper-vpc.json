@@ -146,7 +146,7 @@
       "Properties" : {
         "KeyName" : { "Ref" : "KeyName" },
         "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI"] },
-        "SecurityGroups" : [ { "Ref" : "ServerSecurityGroup" }, { "Ref" : "AdminSecurityGroup" }  ],
+        "SecurityGroups" : [ {  "Fn::GetAtt" : ["ServerSecurityGroup", "GroupId"] }, {  "Fn::GetAtt" : [ "AdminSecurityGroup","GroupId"] }  ],
         "AssociatePublicIpAddress": "true",
         "InstanceType" : { "Ref" : "InstanceType" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -192,20 +192,20 @@
       "Properties" : {
         "GroupDescription" : "Enable SSH and Exhibitor access",
         "SecurityGroupIngress" :
-          [ { "IpProtocol" : "tcp", "FromPort" : "2181", "ToPort" : "2181", "SourceSecurityGroupId" : { "Ref" : "ClientSecurityGroup"} },
-            { "IpProtocol" : "tcp", "FromPort" : "2888", "ToPort" : "2888", "SourceSecurityGroupId" : { "Ref" : "ClientSecurityGroup"} },
-            { "IpProtocol" : "tcp", "FromPort" : "3888", "ToPort" : "3888", "SourceSecurityGroupId" : { "Ref" : "ClientSecurityGroup"} } ]
+          [ { "IpProtocol" : "tcp", "FromPort" : "2181", "ToPort" : "2181", "SourceSecurityGroupId" : {  "Fn::GetAtt" : ["ClientSecurityGroup","GroupId"]} },
+            { "IpProtocol" : "tcp", "FromPort" : "2888", "ToPort" : "2888", "SourceSecurityGroupId" : {  "Fn::GetAtt" : ["ClientSecurityGroup","GroupId"]} },
+            { "IpProtocol" : "tcp", "FromPort" : "3888", "ToPort" : "3888", "SourceSecurityGroupId" : { "Fn::GetAtt" : ["ClientSecurityGroup","GroupId"]} } ]
       }
     },
 
     "SecurityGroupIngress": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "GroupId": { "Ref": "ServerSecurityGroup" },
+        "GroupId": {  "Fn::GetAtt": [ "ServerSecurityGroup","GroupId"] },
         "IpProtocol": "-1",
         "FromPort": "0",
         "ToPort": "65535",
-        "SourceSecurityGroupId": { "Ref": "ServerSecurityGroup" }
+        "SourceSecurityGroupId": {  "Fn::GetAtt" : ["ServerSecurityGroup","GroupId"] }
       }
     },
 
@@ -246,7 +246,7 @@
       ]]}
     },
     "ClientSecurityGroup" : {
-      "Value" : { "Ref" : "ClientSecurityGroup" }
+      "Value" : {  "Fn::GetAtt" : [ "ClientSecurityGroup","GroupId" ]}
     }
   }
 }
