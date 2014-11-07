@@ -214,6 +214,13 @@
       "Properties" : {
         "Scheme": "internal",
         "SecurityGroups": [{ "Ref": "AdminSecurityGroup" }],
+        "AvailabilityZones" : {
+          "Fn::If" : [
+            "UseAllAvailabilityZones",
+            { "Fn::GetAZs": "AWS::Region" },
+            { "Ref" : "AvailabilityZones" }
+          ]
+        },
         "Listeners" : [ {
           "LoadBalancerPort" : "80",
           "InstancePort" : "8181",
