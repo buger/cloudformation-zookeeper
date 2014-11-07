@@ -212,7 +212,6 @@
     "ElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
-        "Scheme": "internal",
         "SecurityGroups": [{ "Ref": "AdminSecurityGroup" }],
         "AvailabilityZones" : {
           "Fn::If" : [
